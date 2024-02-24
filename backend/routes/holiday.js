@@ -6,9 +6,9 @@ const router = Router()
 router.get("/", async (req, res) => {
     let holidays = await fetchAll("SELECT * FROM holiday_packages")
 
-    const holidayIds = holidays.map(holiday => holiday.id).join(",")
+    const holidayIds = holidays.map(holiday => holiday.id).join(",").toString()
 
-    const amenities = await fetchAll("SELECT * FROM amenities WHERE holiday_package_id IN (:holidayIds)", { holidayIds })
+    const amenities = await fetchAll(`SELECT * FROM amenities WHERE holiday_package_id IN (${holidayIds})`)
 
     holidays = holidays.map(holiday => ({
         ...holiday,

@@ -6,10 +6,12 @@ import permissionRoute from "./routes/permission.js"
 import saleRoute from "./routes/sales.js"
 import accountRoute from "./routes/account.js"
 import { config } from "dotenv"
+import cors from "cors"
 
 config()
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 

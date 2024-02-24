@@ -65,11 +65,10 @@ router.patch("/password", authenticate, async (req, res) => {
 router.patch("/", authenticate, async (req, res) => {
     const { employeeId } = req.local
 
-    const { name, email } = req.body
+    const { name } = req.body
 
-    await query("UPDATE employees SET name = :name, email = :email WHERE id = :employeeId", {
+    await query("UPDATE employees SET name = :name WHERE id = :employeeId", {
         name,
-        email,
         employeeId
     })
 
