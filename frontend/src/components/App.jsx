@@ -10,6 +10,7 @@ import LoginPage from "../pages/LoginPage.jsx";
 import AuthContext from "../context/AuthContext.jsx";
 import Authenticate from "./Authenticate.jsx";
 import Admin from "./Admin.jsx";
+import EditPermissionPage from "../pages/EditPermissionPage.jsx";
 
 export default function App() {
 
@@ -28,6 +29,7 @@ export default function App() {
                         <Route path="/account/edit" element={<EditProfilePage />} />
                         <Route path="/account/password/edit" element={<ChangePasswordPage />} />
                         <Route path="/holiday/add" element={<CreateHolidayPlanPage />} />
+                        <Route path="/permission/edit" element={<EditPermissionPage />} />
                     </Route>
                     </Route>
                 </Route>

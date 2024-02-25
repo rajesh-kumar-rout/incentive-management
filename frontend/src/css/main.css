@@ -27,6 +27,8 @@
     --color-gray-400: #9ca3af;
     --color-gray-600: #4b5563;
 
+    --color-green-600: #16a34a;
+
     --sidebar-width: 240px;
 }
 
@@ -299,4 +301,29 @@ input {
     justify-content: start;
     gap: 4px;
     cursor: pointer;
+}
+
+input[type=checkbox] {
+    --bs-form-check-bg: white;
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    margin-top: .25em;
+    vertical-align: top;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: white;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: 1px solid red;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+    print-color-adjust: exact
+}
+
+input[type=checkbox] {
+    border-radius: .25em
 }

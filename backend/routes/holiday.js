@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
 
     holidays = holidays.map(holiday => ({
         ...holiday,
-        amenities: amenities.filter(amenity => amenity.holiday_package_id === holiday.id)
+        amenities: amenities.filter(amenity => amenity.holiday_package_id === holiday.id).map(amenity => amenity.name)
     }))
 
     res.json(holidays)
@@ -24,7 +24,8 @@ router.get("/:id", async (req, res) => {
     const holiday = await fetch("SELECT * FROM holiday_packages WHERE id = :id", { id })
 
     if (holiday) {
-        holiday.amenities = await fetchAll("SELECT * FROM amenities WHERE holiday_package_id = :id", { id: holiday.id })
+        const amenities = await fetchAll("SELECT * FROM amenities WHERE holiday_package_id = :id", { id: holiday.id })
+        holiday.amenities = amenities.map(amenity => amenity.name)
     }
 
     res.json(holiday)

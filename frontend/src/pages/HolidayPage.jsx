@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import useFetcher from "../hooks/fetcher";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 export default function HolidayPage() {
     const [holidays, setHolidays] = useState([])
@@ -19,6 +20,8 @@ export default function HolidayPage() {
     }
 
     const deletePackage = async (packageId) => {
+        if(!confirm("Are you sure you want to delete ? This is can not be undo")) return
+        
         setLoading(true)
 
         const { status, data } = await fetcher({
@@ -74,9 +77,9 @@ export default function HolidayPage() {
                                 <td>{holiday.duration}</td>
                                 <td>{holiday.destination}</td>
                                 <td>{holiday.location}</td>
-                                <td>{holiday.amenities.map(amenity => amenity.name).join(",")}</td>
+                                <td>{holiday.amenities.join(",")}</td>
                                 <td>
-                                    <Link className="icon-btn" title="Edit">
+                                    <Link to={`/holiday/add?id=${holiday.id}`} className="icon-btn" title="Edit">
                                         <MdEdit size={18} />
                                     </Link>
                                     <button className="icon-btn" title="Delete" onClick={()=>deletePackage(holiday.id)}>

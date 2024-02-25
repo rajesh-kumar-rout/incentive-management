@@ -3,6 +3,7 @@ import { MdAdd, MdClose } from "react-icons/md"
 import useFetcher from "../hooks/fetcher"
 import * as Yup from "yup"
 import { toast } from "react-toastify"
+import { useEffect, useState } from "react"
 
 const schema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -15,33 +16,66 @@ const schema = Yup.object({
 
 export default function CreateHolidayPlanPage() {
     const fetcher = useFetcher()
+    const id = new URLSearchParams(window.location.search).get("id")
+    const [loading, setLoading] = useState(false)
+    const [holiday, setHoliday] = useState({
+        name: "",
+        destination: "",
+        location: "",
+        amenities: [""],
+        duration: ""
+    })
+
+    const fetchHolidays = async () => {
+        const { data } = await fetcher({
+            url: `/holidays/${id}`
+        })
+
+        setHoliday(data)
+        setLoading(false)
+    }
 
     const handleSubmit = async (values, { resetForm }) => {
+        const url = id ? `/holidays/${id}` : "/holidays"
+
+        const method = id ? "PATCH" : "POST"
+
         const { status, data } = await fetcher({
-            url: "/holidays",
-            method: "POST",
+            url,
+            method,
             body: values
         })
 
-        if(status === 201) {
+        console.log(data);
+
+        if (status === 201) {
             toast.success(data.message)
             resetForm()
-        } else if(status === 409) {
+        } else if(status === 200){
+            toast.success(data.message)
+        } else if (status === 409) {
             toast.success(data.message)
         } else {
             toast.error("Sorry, An unknown error occur")
         }
     }
 
+    useEffect(() => {
+        if (id) {
+            setLoading(true)
+            fetchHolidays()
+        }
+    }, [])
+
+    if(loading){
+        return (
+            <div className="loader loader-primary"></div>
+        )
+    }
+
     return (
         <Formik
-            initialValues={{
-                name: "",
-                duration: "",
-                location: "",
-                destination: "",
-                amenities: [""]
-            }}
+            initialValues={holiday}
             validationSchema={schema}
             onSubmit={handleSubmit}
         >
