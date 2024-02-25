@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { fetchAll, insert, query, fetch } from "../utils/db.js"
+import { fetch, fetchAll, insert, query } from "../utils/db.js"
 
 const router = Router()
 
@@ -8,11 +8,11 @@ router.get("/", async (req, res) => {
 
     const holidayIds = holidays.map(holiday => holiday.id).join(",").toString()
 
-    const amenities = await fetchAll(`SELECT * FROM amenities WHERE holiday_package_id IN (${holidayIds})`)
+    const amenities = await fetchAll(`SELECT * FROM amenities WHERE holidayPackageId IN (${holidayIds})`)
 
     holidays = holidays.map(holiday => ({
         ...holiday,
-        amenities: amenities.filter(amenity => amenity.holiday_package_id === holiday.id).map(amenity => amenity.name)
+        amenities: amenities.filter(amenity => amenity.holidayPackageId === holiday.id).map(amenity => amenity.name)
     }))
 
     res.json(holidays)
@@ -24,7 +24,7 @@ router.get("/:id", async (req, res) => {
     const holiday = await fetch("SELECT * FROM holiday_packages WHERE id = :id", { id })
 
     if (holiday) {
-        const amenities = await fetchAll("SELECT * FROM amenities WHERE holiday_package_id = :id", { id: holiday.id })
+        const amenities = await fetchAll("SELECT * FROM amenities WHERE holidayPackageId = :id", { id: holiday.id })
         holiday.amenities = amenities.map(amenity => amenity.name)
     }
 
@@ -34,6 +34,12 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
     const { name, duration, destination, location, amenities } = req.body
 
+    const holidayPackage = await fetch("SELECT 1 FROM holiday_packages WHERE name = :name LIMIT 1", { name })
+
+    if (holidayPackage) {
+        return res.status(409).json({ message: "Holiday package already exists" })
+    }
+
     const packageId = await insert("INSERT INTO holiday_packages (name, duration, destination, location) VALUES (:name, :duration, :destination, :location)", {
         name,
         duration,
@@ -42,7 +48,7 @@ router.post("/", async (req, res) => {
     })
 
     for (const amenity of amenities) {
-        await insert("INSERT INTO amenities (name, holiday_package_id) VALUES (:amenity, :packageId)", {
+        await insert("INSERT INTO amenities (name, holidayPackageId) VALUES (:amenity, :packageId)", {
             amenity,
             packageId
         })
@@ -64,10 +70,10 @@ router.patch("/:id", async (req, res) => {
         location
     })
 
-    await query("DELETE FROM amenities WHERE holiday_package_id = :id", { id })
+    await query("DELETE FROM amenities WHERE holidayPackageId = :id", { id })
 
     for (const amenity of amenities) {
-        await insert("INSERT INTO amenities (name, holiday_package_id) VALUES (:amenity, :id)", {
+        await insert("INSERT INTO amenities (name, holidayPackageId) VALUES (:amenity, :id)", {
             amenity,
             id
         })

@@ -1,7 +1,7 @@
-import { ErrorMessage, Field, Formik, Form } from "formik"
-import useFetcher from "../hooks/fetcher"
-import * as Yup from "yup"
+import { ErrorMessage, Field, Form, Formik } from "formik"
 import { toast } from "react-toastify"
+import * as Yup from "yup"
+import useFetcher from "../hooks/useFetcher"
 
 const schema = Yup.object({
     oldPassword: Yup.string().required("Old password is required"),

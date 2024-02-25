@@ -1,9 +1,10 @@
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik"
-import { MdAdd, MdClose } from "react-icons/md"
-import useFetcher from "../hooks/fetcher"
-import * as Yup from "yup"
-import { toast } from "react-toastify"
 import { useEffect, useState } from "react"
+import { MdAdd, MdClose } from "react-icons/md"
+import { toast } from "react-toastify"
+import * as Yup from "yup"
+import useFetcher from "../hooks/useFetcher"
+import Loader from "../components/Loader"
 
 const schema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -13,8 +14,7 @@ const schema = Yup.object({
     amenities: Yup.array().required().of(Yup.string().required("Amenity is required"))
 })
 
-
-export default function CreateHolidayPlanPage() {
+export default function CreateHolidayPage() {
     const fetcher = useFetcher()
     const id = new URLSearchParams(window.location.search).get("id")
     const [loading, setLoading] = useState(false)
@@ -67,10 +67,8 @@ export default function CreateHolidayPlanPage() {
         }
     }, [])
 
-    if(loading){
-        return (
-            <div className="loader loader-primary"></div>
-        )
+    if (loading) {
+        return <Loader size="full" variant="primary" />
     }
 
     return (
@@ -81,7 +79,7 @@ export default function CreateHolidayPlanPage() {
         >
             {({ values, isSubmitting }) => (
                 <Form className="form" style={{ marginTop: 30 }}>
-                    <h3 className="form-title">Add Holiday Plan</h3>
+                    <h3 className="form-title">{id ? "Edit Holiday Package" : "Add Holiday Package"}</h3>
 
                     <div className="form-group">
                         <label htmlFor="name" className="form-label required">Name</label>

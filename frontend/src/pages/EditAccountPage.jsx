@@ -1,8 +1,8 @@
-import { ErrorMessage, Field, Formik, Form } from "formik"
-import useFetcher from "../hooks/fetcher"
-import * as Yup from "yup"
+import { ErrorMessage, Field, Form, Formik } from "formik"
 import { toast } from "react-toastify"
-import { useAuth } from "../context/AuthContext"
+import * as Yup from "yup"
+import { useAuth } from "../contexts/AuthContext"
+import useFetcher from "../hooks/useFetcher"
 
 const schema = Yup.object({
     name: Yup.string().required("Name is required")

@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect } from "react"
-import useFetcher from "../hooks/fetcher"
+import Loader from "../components/Loader"
+import { createContext, useContext, useEffect, useState } from "react"
+import useFetcher from "../hooks/useFetcher"
 
 const Provider = createContext()
 
@@ -10,30 +11,25 @@ export default function AuthContext({ children }) {
     const [loading, setLoading] = useState(true)
     const fetcher = useFetcher()
 
-    const loadAccount = async () => {
-        const { status, data } = await fetcher({
+    const fetchAccount = async () => {
+        const { data } = await fetcher({
             url: "/account"
         })
 
-        if (status === 200) {
-            setAccount(data)
-        }
-
+        setAccount(data)
         setLoading(false)
     }
 
     useEffect(() => {
-        loadAccount()
+        fetchAccount()
     }, [])
 
-    if(loading){
-        return (
-            <div className="loader loader-primary"></div>
-        )
+    if (loading) {
+        return <Loader size="full" variant="primary" />
     }
 
     return (
-        <Provider.Provider 
+        <Provider.Provider
             value={{
                 account,
                 setAccount,

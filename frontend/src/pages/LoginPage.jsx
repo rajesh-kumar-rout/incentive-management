@@ -1,10 +1,8 @@
-import { Field, Formik, Form, ErrorMessage } from "formik"
-import { useState } from "react"
-import * as Yup from "yup"
-import axios from "../utils/axios"
+import Loader from "../components/Loader"
+import { ErrorMessage, Field, Form, Formik } from "formik"
 import { toast } from "react-toastify"
-import { useNavigate } from "react-router-dom"
-import useFetcher from "../hooks/fetcher"
+import * as Yup from "yup"
+import useFetcher from "../hooks/useFetcher"
 
 const schema = Yup.object({
     email: Yup.string().required("Email is required").email("Invalid email"),
@@ -13,7 +11,6 @@ const schema = Yup.object({
 
 export default function LoginPage() {
     const searchParams = new URLSearchParams(window.location.search)
-    const navigate = useNavigate()
     const fetcher = useFetcher()
 
     const handleSubmit = async (values, { setSubmitting }) => {
@@ -24,8 +21,6 @@ export default function LoginPage() {
             method: "post",
             body: values
         })
-
-        console.log(status, data);
 
         if (status === 422) {
             toast.error(data.message)
@@ -48,7 +43,7 @@ export default function LoginPage() {
             validationSchema={schema}
             onSubmit={handleSubmit}
         >
-            {({ values, isSubmitting, }) => (
+            {({ isSubmitting, }) => (
                 <Form className="form" style={{ marginTop: 30 }}>
                     <h3 className="form-title">Login</h3>
 
@@ -64,10 +59,12 @@ export default function LoginPage() {
                         <ErrorMessage component="span" name="password" className="form-error" />
                     </div>
 
-                    <button type="submit" disabled={isSubmitting} className="btn btn-primary btn-full">Login</button>
+                    <button type="submit" disabled={isSubmitting} className="btn btn-primary btn-full">
+                        {isSubmitting && <Loader size="sm" variant="white" />}
+                        <span>Login</span>
+                    </button>
                 </Form>
             )}
         </Formik>
-
     )
 }

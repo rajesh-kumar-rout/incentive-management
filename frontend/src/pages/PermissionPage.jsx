@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
-import useFetcher from "../hooks/fetcher"
-import { Link } from "react-router-dom"
-import { MdAdd, MdCheck, MdClose, MdDone, MdEdit } from "react-icons/md"
+import { MdClose, MdDone } from "react-icons/md"
+import { toast } from "react-toastify"
+import useFetcher from "../hooks/useFetcher"
+import Loader from "../components/Loader"
 
 export default function PermissionPage() {
     const fetcher = useFetcher()
@@ -17,56 +18,84 @@ export default function PermissionPage() {
         setLoading(false)
     }
 
+    const changePermission = async (id, action) => {
+        if (!confirm("Are you sure you want to do this action ?")) return
+
+        setLoading(true)
+
+        const { data } = await fetcher({
+            url: `/permissions/${id}?action=${action}`,
+            method: "PATCH"
+        })
+
+        toast.success(data.message)
+        fetchPermissions()
+    }
+
     useEffect(() => {
         fetchPermissions()
     }, [])
 
-    if(loading){
-        return (
-            <div className="loader loader-primary"></div>
-        )
+    if (loading) {
+        return <Loader size="full" variant="primary" />
     }
 
     return (
         <div>
+            <div className="page-action">
+                <h3 className="page-title">Permissions</h3>
+            </div>
 
-        <div className="page-action">
-            <h3 className="page-title">Holiday Plans</h3>
-            <Link className="btn btn-sm btn-primary btn-action" to="/holiday/add">
-                <MdAdd size={18} /> Add New</Link>
-        </div>
-
-
-        <div className="table-responsive">
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Admin</th>
-                        <th>Active</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {permissions.map(permission => (
+            <div className="table-responsive">
+                <table className="table">
+                    <thead>
                         <tr>
-                            <td>{permission.name}</td>
-                            <td>{permission.email}</td>
-                            <td>
-                                {permission.is_admin ? <MdDone fill="var(--color-green-600)"/> : <MdClose fill="var(--color-red-600)"/>}
-                            </td>
-                            <td>{permission.is_active ? <MdDone fill="var(--color-green-600)"/> : <MdClose fill="var(--color-red-600)"/>}</td>
-                            <td>
-                                <Link to={`/holiday/add?id=${permission.id}`} className="icon-btn" title="Edit">
-                                    <MdEdit size={18} />
-                                </Link>
-                            </td>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Admin</th>
+                            <th>Active</th>
+                            <th>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {permissions.map(permission => (
+                            <tr key={permission.id}>
+                                <td>{permission.name}</td>
+                                <td>{permission.email}</td>
+                                <td>
+                                    {permission.isAdmin ? <MdDone fill="var(--color-green-600)" /> : <MdClose fill="var(--color-red-600)" />}
+                                </td>
+                                <td>
+                                    {permission.isActive ? <MdDone fill="var(--color-green-600)" /> : <MdClose fill="var(--color-red-600)" />}
+                                </td>
+                                <td>
+                                    <div style={{ display: "flex", gap: 4 }}>
+                                        {permission.isAdmin ? (
+                                            <button className="btn btn-sm btn-primary" onClick={() => changePermission(permission.id, "removeAdmin")}>
+                                                Remove Admin
+                                            </button>
+                                        ) : (
+                                            <button className="btn btn-sm btn-primary" onClick={() => changePermission(permission.id, "makeAdmin")}>
+                                                Make Admin
+                                            </button>
+                                        )}
+
+                                        {permission.isActive ? (
+                                            <button className="btn btn-sm btn-primary" onClick={() => changePermission(permission.id, "deactivate")}>
+                                                Deactivate
+                                            </button>
+                                        ) : (
+                                            <button className="btn btn-sm btn-primary" onClick={() => changePermission(permission.id, "activate")}>
+                                                Activate
+                                            </button>
+                                        )}
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
     )
 }

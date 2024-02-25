@@ -4,7 +4,7 @@ import { fetchAll, insert, fetch, query } from "../utils/db.js"
 const router = Router()
 
 router.get("/", async (req, res) => {
-    const { employeeId } = req.local
+    const employeeId = req.employee.id
 
     const page = req.query.page ?? 1
 
@@ -12,12 +12,11 @@ router.get("/", async (req, res) => {
 
     const offset = (page * 10) - 10
 
-    const { total } = await fetch("SELECT COUNT(*) AS total FROM sales WHERE employee_id = :employeeId", { employeeId })
+    const { total } = await fetch(`SELECT COUNT(*) AS total FROM sales WHERE employeeId = ${employeeId}`)
 
-    const sales = await fetchAll("SELECT * FROM sales INNER JOIN customers ON customers.id = sales.customer_id INNER JOIN products ON products.id = sales.product_id WHERE employee_id = :employeeId ORDER BY sales.id DESC LIMIT :limit OFFSET :offset", {
+    const sales = await fetchAll(`SELECT sales.id, products.name AS product, customers.name, customers.mobile FROM sales INNER JOIN customers ON customers.id = sales.customerId INNER JOIN products ON products.id = sales.productId WHERE employeeId = ${employeeId} ORDER BY sales.id DESC LIMIT :limit OFFSET :offset`, {
         limit,
-        offset,
-        employeeId
+        offset
     })
 
     res.json({
@@ -27,35 +26,48 @@ router.get("/", async (req, res) => {
 })
 
 router.post("/", async (req, res) => {
-    const { employeeId } = req.local
+    const employeeId = req.employee.id
 
-    const { adharNo, productId } = req.body
+    const { name, mobile, productId } = req.body
 
-    const customer = await fetch("SELECT * FROM customers WHERE adhar_no = :adharNo LIMIT 1", { adharNo })
+    const customer = await fetch("SELECT * FROM customers WHERE mobile = :mobile LIMIT 1", { mobile })
 
     let customerId = null
 
     if (customer) {
         customerId = customer.id
     } else {
-        customerId = await insert("INSERT INTO customers (adhar_no) VALUES (:adharNo)", {
-            adharNo
+        customerId = await insert("INSERT INTO customers (name, mobile) VALUES (:name, :mobile)", {
+            name,
+            mobile
         })
     }
 
-    await insert("INSERT INTO sales (customer_id, employee_id, product_id) VALUES (:customerId, :employeeId, :productId)", {
+    await insert("INSERT INTO sales (customerId, employeeId, productId) VALUES (:customerId, :employeeId, :productId)", {
         customerId,
         employeeId,
         productId
     })
 
-    const { totalSales } = await fetch("SELECT COUNT(*) AS totalSales FROM sales WHERE employee_id = :employeeId", {
-        employeeId
-    })
+    const { totalSales } = await fetch(`SELECT COUNT(*) AS totalSales FROM sales WHERE employeeId = ${employeeId}`)
 
-    if (totalSales === 2) {
-        await query("INSERT INTO incentives (percentage, employee_id) VALUES (1.5, :employeeId)", { employeeId })
+    let percentage = 0
+    let bonus = 0
+    let holidayPackageId = null
+
+    if (totalSales === 50000) {
+        holidayPackageId = await fetch(`SELECT id FROM holidayPackages ORDER BY RAND() LIMIT 1`)
+        percentage = 5
+    } else if (totalSales === 30000) {
+        percentage = 3.5
+        bonus = 1000
+    } else if (totalSales === 20000) {
+        percentage = 3
+    } else if (totalSales === 10000) {
+        percentage = 1.5
     }
+
+    await query(`INSERT INTO incentives (percentage, bonus, holidayPackageId, employeeId) VALUES (${percentage}, ${bonus}, ${holidayPackageId}, ${employeeId})`)
 
     res.status(201).json({ message: "Sale added successfully" })
 })

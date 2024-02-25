@@ -1,9 +1,9 @@
-import { MdAdd, MdDelete, MdEdit, MdOutlineDelete } from "react-icons/md";
-import { Link } from "react-router-dom";
-import useFetcher from "../hooks/fetcher";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import Swal from "sweetalert2";
+import { useEffect, useState } from "react"
+import { MdAdd, MdDelete, MdEdit } from "react-icons/md"
+import { Link } from "react-router-dom"
+import { toast } from "react-toastify"
+import useFetcher from "../hooks/useFetcher"
+import Loader from "../components/Loader"
 
 export default function HolidayPage() {
     const [holidays, setHolidays] = useState([])
@@ -20,8 +20,8 @@ export default function HolidayPage() {
     }
 
     const deletePackage = async (packageId) => {
-        if(!confirm("Are you sure you want to delete ? This is can not be undo")) return
-        
+        if (!confirm("Are you sure you want to delete ? This is can not be undo")) return
+
         setLoading(true)
 
         const { status, data } = await fetcher({
@@ -44,19 +44,19 @@ export default function HolidayPage() {
     }, [])
 
     if (loading) {
-        return (
-            <div className="loader loader-primary"></div>
-        )
+        return <Loader size="full" variant="primary" />
     }
+
     return (
         <div>
-
             <div className="page-action">
                 <h3 className="page-title">Holiday Plans</h3>
-                <Link className="btn btn-sm btn-primary btn-action" to="/holiday/add">
-                    <MdAdd size={18} /> Add New</Link>
-            </div>
 
+                <Link className="btn btn-sm btn-primary btn-action" to="/holiday/add">
+                    <MdAdd size={18} />
+                    <span>Add New</span>
+                </Link>
+            </div>
 
             <div className="table-responsive">
                 <table className="table">
@@ -82,7 +82,8 @@ export default function HolidayPage() {
                                     <Link to={`/holiday/add?id=${holiday.id}`} className="icon-btn" title="Edit">
                                         <MdEdit size={18} />
                                     </Link>
-                                    <button className="icon-btn" title="Delete" onClick={()=>deletePackage(holiday.id)}>
+                                    
+                                    <button className="icon-btn" title="Delete" onClick={() => deletePackage(holiday.id)}>
                                         <MdDelete size={18} />
                                     </button>
                                 </td>

@@ -1,15 +1,15 @@
-import { Router } from "express"
-import { insert, query, fetch } from "../utils/db.js"
 import bcrypt from "bcrypt"
 import crypto from "crypto"
-import { authenticate } from "../middlewares/auth.js"
+import { Router } from "express"
+import { isActive, isAuthenticated } from "../middlewares/auth.js"
+import { fetch, insert, query } from "../utils/db.js"
 
 const router = Router()
 
-router.get("/", authenticate, async (req, res) => {
-    const { employeeId } = req.local
+router.get("/", async (req, res) => {
+    const id = req.employee?.id ?? -1
 
-    const employee = await fetch("SELECT id, name, email, is_admin FROM employees WHERE id = :employeeId LIMIT 1", { employeeId })
+    const employee = await fetch(`SELECT id, name, email, isAdmin, isActive FROM employees WHERE id = ${id} LIMIT 1`)
 
     res.json(employee)
 })
@@ -19,13 +19,15 @@ router.post("/login", async (req, res) => {
 
     const employee = await fetch("SELECT * FROM employees WHERE email = :email LIMIT 1", { email })
 
+    console.log(employee);
+
     if (!(employee && await bcrypt.compare(password, employee.password))) {
         return res.status(422).json({ message: "Invalid email or password" })
     }
 
     const token = crypto.randomBytes(32).toString('hex')
 
-    await insert("INSERT INTO auth_tokens (employee_id, token) VALUES (:employeeId, :token)", {
+    await insert("INSERT INTO auth_tokens (employeeId, token) VALUES (:employeeId, :token)", {
         employeeId: employee.id,
         token
     })
@@ -33,7 +35,7 @@ router.post("/login", async (req, res) => {
     res.json({ token })
 })
 
-router.delete("/logout", authenticate, async (req, res) => {
+router.delete("/logout", isAuthenticated, isActive, async (req, res) => {
     const { authorization } = req.headers
 
     const token = authorization?.slice(7, authorization?.length) ?? null
@@ -43,34 +45,30 @@ router.delete("/logout", authenticate, async (req, res) => {
     res.json({ message: "Logout successfully" })
 })
 
-router.patch("/password", authenticate, async (req, res) => {
-    const { employeeId } = req.local
+router.patch("/password", isAuthenticated, isActive, async (req, res) => {
+    const { id } = req.employee
 
     const { oldPassword, newPassword } = req.body
 
-    const employee = await fetch("SELECT * FROM employees WHERE id = :employeeId", { employeeId })
+    const employee = await fetch(`SELECT * FROM employees WHERE id = ${id}`)
 
     if (!await bcrypt.compare(oldPassword, employee.password)) {
         return res.status(422).json({ message: "Old password does not match" })
     }
 
-    await query("UPDATE employees SET password = :password WHERE id = :employeeId", {
-        password: await bcrypt.hash(newPassword, 10),
-        employeeId
+    await query(`UPDATE employees SET password = :password WHERE id = ${id}`, {
+        password: await bcrypt.hash(newPassword, 10)
     })
 
     res.json({ message: "Password changed successfully" })
 })
 
-router.patch("/", authenticate, async (req, res) => {
-    const { employeeId } = req.local
+router.patch("/", isAuthenticated, isActive, async (req, res) => {
+    const { id } = req.employee
 
     const { name } = req.body
 
-    await query("UPDATE employees SET name = :name WHERE id = :employeeId", {
-        name,
-        employeeId
-    })
+    await query(`UPDATE employees SET name = :name WHERE id = ${id}`, { name })
 
     res.json({ message: "Account edited successfully" })
 })

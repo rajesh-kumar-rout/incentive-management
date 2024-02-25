@@ -1,8 +1,8 @@
-import { useAuth } from "../context/AuthContext";
-import { Navigate, Outlet, useSearchParams } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Admin() {
     const { account } = useAuth()
 
-    return account.is_admin === 1 ? <Outlet/> : <Navigate to="/login" replace/>
+    return account.isAdmin === 1 ? <Outlet/> : <Navigate to="/denied?message=Access denied. You are not an admin" replace/>
 }
