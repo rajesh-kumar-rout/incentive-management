@@ -10,6 +10,7 @@ import productRoute from "./routes/product.js"
 import saleRoute from "./routes/sales.js"
 import seedRoute from "./routes/seed.js"
 import statisticsRoute from "./routes/statistics.js"
+import cron from "node-cron"
 import incentiveCorn from "./corn/incentive.js"
 
 config()
