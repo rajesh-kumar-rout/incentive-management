@@ -4,7 +4,7 @@ export default function useFetcher() {
     const navigate = useNavigate()
 
     return async (config) => {
-        config.url = "http://localhost:3001/admin" + config.url
+        config.url = import.meta.env.VITE_API_URL + config.url
 
         if (!config.headers) {
             config.headers = {}
@@ -42,9 +42,7 @@ export default function useFetcher() {
         if (response.status === 401) {
             localStorage.removeItem("token")
             navigate("/login")
-        }
-
-        if (response.status === 403) {
+        } else if (response.status === 403) {
             navigate("/denied")
         }
 

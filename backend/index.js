@@ -4,12 +4,13 @@ import express from "express"
 import { authenticate, isActive, isAdmin, isAuthenticated } from "./middlewares/auth.js"
 import accountRoute from "./routes/account.js"
 import holidayRoute from "./routes/holiday.js"
-import permissionRoute from "./routes/permission.js"
 import incentiveRoute from "./routes/incentive.js"
+import permissionRoute from "./routes/permission.js"
 import productRoute from "./routes/product.js"
 import saleRoute from "./routes/sales.js"
+import seedRoute from "./routes/seed.js"
 import statisticsRoute from "./routes/statistics.js"
-import { fetchAll } from "./utils/db.js"
+import incentiveCorn from "./corn/incentive.js"
 
 config()
 const app = express()
@@ -66,15 +67,14 @@ app.use(
     "/admin/account",
     accountRoute
 )
-import { query, fetch } from "./utils/db.js"
 
-app.get("/demo", async(req, res) => {
-    // for(let i = 1; i < 50000; i++){
-    //     await query("INSERT INTO sales (customerId, employeeId, productId) VALUES (1,32,1)")
-    // }
+app.use(
+    "/admin/seed",
+    seedRoute
+)
 
-    const r = await fetch("SELECT COUNT(*) as toal FROM sales WHERE customerId = 1 AND employeeId = 32 AND productId = 1")
-    res.json({r})
+cron.schedule("59 23 * * *", incentiveCorn, {
+    timezone: "Asia/Kolkata"
 })
 
 app.listen(process.env.PORT, () => {

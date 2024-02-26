@@ -1,12 +1,14 @@
-import { MdAccountCircle, MdHome, MdList, MdLogout, MdPassword, MdSettings } from "react-icons/md"
+import { MdAccountCircle, MdHome, MdList, MdLogout, MdMenu, MdPassword, MdSettings } from "react-icons/md"
 import { Link, NavLink, Outlet } from "react-router-dom"
 import { toast } from "react-toastify"
 import useFetcher from "../hooks/useFetcher"
 import { useAuth } from "../contexts/AuthContext"
+import { useState } from "react"
 
 export default function Layout() {
     const fetcher = useFetcher()
     const { account } = useAuth()
+    const [showSidebar, setShowSidebar] = useState(false)
 
     const handleLogout = async event => {
         event.preventDefault()
@@ -25,7 +27,7 @@ export default function Layout() {
 
     return (
         <div>
-            <div className="sidebar">
+            <div className={`sidebar ${showSidebar ? "sidebar-open" : null}`}>
                 <h3 className="sidebar-title">Incentive Management</h3>
 
                 <ul className="sidebar-links">
@@ -89,6 +91,11 @@ export default function Layout() {
                         </Link>
                     </li>
                 </ul>
+            </div>
+
+            <div className="sidebar-menu">
+                <h3 className="sidebar-menu-title">Incentive Management</h3>
+                <MdMenu size={24} onClick={() => setShowSidebar(!showSidebar)} />
             </div>
 
             <div className="content">

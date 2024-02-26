@@ -34,7 +34,9 @@ a,
 p,
 label,
 textarea,
-input {
+input,
+select,
+button {
     font-size: 16px;
 }
 
@@ -47,6 +49,7 @@ input {
     left: 0px;
     top: 0px;
     bottom: 0px;
+    transition: all 300ms;
 }
 
 .sidebar-title {
@@ -80,13 +83,33 @@ input {
     overflow-y: auto;
 }
 
-@media (max-width: 640px) {
+.sidebar-open {
+    left: 0px !important;
+}
+
+.sidebar-menu {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-gray-300);
+    padding: 20px;
+}
+
+.sidebar-menu-title {
+    color: var(--color-indigo-600);
+}
+
+@media (max-width: 720px) {
     .sidebar {
         left: -240px;
     }
 
     .content {
         margin-left: 0px;
+    }
+
+    .sidebar-menu {
+        display: flex;
     }
 }
 
@@ -126,7 +149,6 @@ input {
     border: 1px solid var(--color-gray-300);
     outline: none;
     border-radius: 6px;
-    font-size: 16px;
     padding: 6px 10px;
 }
 
@@ -160,7 +182,6 @@ input {
     text-decoration: none;
     font-weight: 500;
     background: none;
-    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -265,7 +286,7 @@ input {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .page-title {
@@ -358,22 +379,17 @@ input {
     padding: 16px 0px;
 }
 
-.pagination {
+.pagination-container {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    justify-content: end;
+    margin-top: 18px;
 }
 
-.pagination-items {
+.pagination {
     border: 1px solid var(--color-gray-300);
     border-radius: 6px;
-    margin-top: 20px;
-    margin-left: auto;
-    display: inline-block;
-}
-
-.pagination-label {
-    color: var(--color-gray-600);
+    display: inline-flex;
+    align-items: center;
 }
 
 .pagination-item {

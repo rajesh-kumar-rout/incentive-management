@@ -82,7 +82,7 @@ export default function CreateSalePage() {
                     </div>
 
                     <button disabled={isSubmitting} type="submit" className="btn btn-primary btn-full">
-                        {isSubmitting && <Loader size="sm" variant="primary" />}
+                        {isSubmitting && <Loader size="sm" variant="white" />}
                         <span>Save</span>
                     </button>
                 </Form>

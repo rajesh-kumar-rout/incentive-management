@@ -3,6 +3,7 @@ import crypto from "crypto"
 import { Router } from "express"
 import { isActive, isAuthenticated } from "../middlewares/auth.js"
 import { fetch, insert, query } from "../utils/db.js"
+import { body, validationResult } from "express-validator"
 
 const router = Router()
 
@@ -14,26 +15,38 @@ router.get("/", async (req, res) => {
     res.json(employee)
 })
 
-router.post("/login", async (req, res) => {
-    const { email, password } = req.body
+router.post(
+    "/login",
 
-    const employee = await fetch("SELECT * FROM employees WHERE email = :email LIMIT 1", { email })
+    body("email").isString().bail().trim().notEmpty(),
 
-    console.log(employee);
+    body("password").isString().bail().notEmpty(),
 
-    if (!(employee && await bcrypt.compare(password, employee.password))) {
-        return res.status(422).json({ message: "Invalid email or password" })
+    async (req, res) => {
+        const result = validationResult(req)
+
+        if (!result.isEmpty()) {
+            return res.status(422).json(result.array())
+        }
+
+        const { email, password } = req.body
+
+        const employee = await fetch("SELECT * FROM employees WHERE email = :email LIMIT 1", { email })
+
+        if (!(employee && await bcrypt.compare(password, employee.password))) {
+            return res.status(422).json({ message: "Invalid email or password" })
+        }
+
+        const token = crypto.randomBytes(32).toString("hex")
+
+        await insert("INSERT INTO auth_tokens (employeeId, token) VALUES (:employeeId, :token)", {
+            employeeId: employee.id,
+            token
+        })
+
+        res.json({ token })
     }
-
-    const token = crypto.randomBytes(32).toString('hex')
-
-    await insert("INSERT INTO auth_tokens (employeeId, token) VALUES (:employeeId, :token)", {
-        employeeId: employee.id,
-        token
-    })
-
-    res.json({ token })
-})
+)
 
 router.delete("/logout", isAuthenticated, isActive, async (req, res) => {
     const { authorization } = req.headers
@@ -45,32 +58,65 @@ router.delete("/logout", isAuthenticated, isActive, async (req, res) => {
     res.json({ message: "Logout successfully" })
 })
 
-router.patch("/password", isAuthenticated, isActive, async (req, res) => {
-    const { id } = req.employee
+router.patch(
+    "/password", 
+    
+    isAuthenticated, 
+    
+    isActive, 
 
-    const { oldPassword, newPassword } = req.body
+    body("oldPassword").isString().bail().notEmpty(),
+    body("newPassword").isString().bail().notEmpty().bail().isLength({min: 6, max: 20}),
+    
+    async (req, res) => {
+        const result = validationResult(req)
 
-    const employee = await fetch(`SELECT * FROM employees WHERE id = ${id}`)
+        if(!result.isEmpty()) {
+            return res.status(422).json(result.array())
+        }
 
-    if (!await bcrypt.compare(oldPassword, employee.password)) {
-        return res.status(422).json({ message: "Old password does not match" })
+        const employeeId = req.employee.id
+
+        const { oldPassword, newPassword } = req.body
+
+        const employee = await fetch(`SELECT * FROM employees WHERE id = ${employeeId}`)
+
+        if (!await bcrypt.compare(oldPassword, employee.password)) {
+            return res.status(422).json({ message: "Old password does not match" })
+        }
+
+        await query(`UPDATE employees SET password = :password WHERE id = ${employeeId}`, {
+            password: await bcrypt.hash(newPassword, 10)
+        })
+
+        res.json({ message: "Password changed successfully" })
     }
+)
 
-    await query(`UPDATE employees SET password = :password WHERE id = ${id}`, {
-        password: await bcrypt.hash(newPassword, 10)
-    })
+router.patch(
+    "/", 
+    
+    isAuthenticated, 
+    
+    isActive, 
 
-    res.json({ message: "Password changed successfully" })
-})
+    body("name").isString().bail().trim().notEmpty(),
+    
+    async (req, res) => {
+        const result = validationResult(req)
 
-router.patch("/", isAuthenticated, isActive, async (req, res) => {
-    const { id } = req.employee
+        if(!result.isEmpty()) {
+            return res.status(422).json(result.array())
+        }
 
-    const { name } = req.body
+        const employeeId = req.employee.id
 
-    await query(`UPDATE employees SET name = :name WHERE id = ${id}`, { name })
+        const { name } = req.body
 
-    res.json({ message: "Account edited successfully" })
-})
+        await query(`UPDATE employees SET name = :name WHERE id = ${employeeId}`, { name })
+
+        res.json({ message: "Account edited successfully" })
+    }
+)
 
 export default router

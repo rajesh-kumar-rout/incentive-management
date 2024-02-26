@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
-import { MdAdd, MdArrowBack, MdArrowForward } from "react-icons/md"
+import { MdAdd, MdArrowBackIos, MdArrowForwardIos } from "react-icons/md"
 import { Link } from "react-router-dom"
-import useFetcher from "../hooks/useFetcher"
 import Loader from "../components/Loader"
+import useFetcher from "../hooks/useFetcher"
 
 export default function SalesPage() {
     const [sales, setSales] = useState([])
@@ -19,6 +19,16 @@ export default function SalesPage() {
         setSales(data.data)
         setTotalPage(data.totalPage)
         setLoading(false)
+    }
+
+    const pages = () => {
+        const pages = []
+
+        for (let index = 1; index <= totalPage; index++) {
+            pages.push(index)
+        }
+
+        return pages
     }
 
     useEffect(() => {
@@ -63,18 +73,21 @@ export default function SalesPage() {
                 </table>
             </div>
 
-            <div className="pagination">
-                <p className="pagination-label">Showing page {currentPage} out of {totalPage}</p>
-
-                <div className="pagination-items">
+            <div className="pagination-container">
+                <div className="pagination">
                     {currentPage !== 1 && (
                         <button className="pagination-item" onClick={() => setCurrentPage(currentPage - 1)}>
-                            <MdArrowBack size={18} />
+                            <MdArrowBackIos size={16} />
                         </button>
                     )}
+
+                    <select value={currentPage} className="pagination-item" onChange={event => setCurrentPage(parseInt(event.target.value))}>
+                        {pages().map(page => <option value={page}>{page}</option>)}
+                    </select>
+
                     {currentPage < totalPage && (
                         <button className="pagination-item" onClick={() => setCurrentPage(currentPage + 1)}>
-                            <MdArrowForward size={18} />
+                            <MdArrowForwardIos size={16} />
                         </button>
                     )}
                 </div>

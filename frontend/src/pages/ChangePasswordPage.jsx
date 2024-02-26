@@ -2,6 +2,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik"
 import { toast } from "react-toastify"
 import * as Yup from "yup"
 import useFetcher from "../hooks/useFetcher"
+import Loader from "../components/Loader"
 
 const schema = Yup.object({
     oldPassword: Yup.string().required("Old password is required"),
@@ -67,7 +68,7 @@ export default function ChangePasswordPage() {
                     </div>
 
                     <button disabled={isSubmitting} type="submit" className="btn btn-primary btn-full">
-                        {isSubmitting && <div className="loader loader-sm loader-white"></div>}
+                        {isSubmitting && <Loader size="sm" variant="white" />}
                         Change Password
                     </button>
                 </Form>

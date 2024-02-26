@@ -14,6 +14,7 @@ CREATE TABLE employees(
     `name` VARCHAR(20) NOT NULL,
     `email` VARCHAR(40) NOT NULL UNIQUE,
     `password` VARCHAR(255) NOT NULL,
+    `salary` INT NOT NULL,
     `isAdmin` BOOLEAN DEFAULT False,
     `isActive` BOOLEAN DEFAULT True,
     PRIMARY KEY (`id`)
@@ -39,6 +40,7 @@ CREATE TABLE amenities(
 CREATE TABLE incentives(
     `id` BIGINT(20) AUTO_INCREMENT,
     `percentage` FLOAT,
+    `amount` INT NOT NULL,
     `bonus` INT,
     `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `holidayPackageId` BIGINT(20),
@@ -71,26 +73,3 @@ CREATE TABLE auth_tokens (
     FOREIGN KEY (`employeeId`) REFERENCES `employees`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-INSERT INTO products (name) VALUES
-('Savings Account'),
-('Current Account'),
-('Fixed Deposit'),
-('Recurring Deposit'),
-('Home Loan'),
-('Personal Loan'),
-('Credit Card'),
-('Car Loan'),
-('Business Loan'),
-('Health Insurance');
-
-INSERT INTO employees (name, email, password, isAdmin, isActive) VALUES
-('Admin User', 'admin@example.com', '$2b$10$WtcPje.8Cy3E2nerFfrsF.hp86Ly2ln37RYVlFHsPpcrsJzrRivlC', TRUE, TRUE),
-('John Doe', 'john.doe@example.com', '$2b$10$WtcPje.8Cy3E2nerFfrsF.hp86Ly2ln37RYVlFHsPpcrsJzrRivlC', FALSE, TRUE),
-('Jane Smith', 'jane.smith@example.com', '$2b$10$WtcPje.8Cy3E2nerFfrsF.hp86Ly2ln37RYVlFHsPpcrsJzrRivlC', FALSE, TRUE),
-('Michael Johnson', 'michael.johnson@example.com', '$2b$10$WtcPje.8Cy3E2nerFfrsF.hp86Ly2ln37RYVlFHsPpcrsJzrRivlC', FALSE, TRUE),
-('Emily Davis', 'emily.davis@example.com', '$2b$10$WtcPje.8Cy3E2nerFfrsF.hp86Ly2ln37RYVlFHsPpcrsJzrRivlC', FALSE, TRUE),
-('Robert Williams', 'robert.williams@example.com', '$2b$10$WtcPje.8Cy3E2nerFfrsF.hp86Ly2ln37RYVlFHsPpcrsJzrRivlC', FALSE, TRUE),
-('Amanda Wilson', 'amanda.wilson@example.com', '$2b$10$WtcPje.8Cy3E2nerFfrsF.hp86Ly2ln37RYVlFHsPpcrsJzrRivlC', FALSE, TRUE),
-('Daniel Brown', 'daniel.brown@example.com', '$2b$10$WtcPje.8Cy3E2nerFfrsF.hp86Ly2ln37RYVlFHsPpcrsJzrRivlC', FALSE, TRUE),
-('Sophia Miller', 'sophia.miller@example.com', '$2b$10$WtcPje.8Cy3E2nerFfrsF.hp86Ly2ln37RYVlFHsPpcrsJzrRivlC', FALSE, TRUE),
-('Ethan Jones', 'ethan.jones@example.com', '$2b$10$WtcPje.8Cy3E2nerFfrsF.hp86Ly2ln37RYVlFHsPpcrsJzrRivlC', FALSE, TRUE);
