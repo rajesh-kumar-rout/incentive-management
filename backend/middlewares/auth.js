@@ -12,7 +12,7 @@ export const authenticate = async (req, res, next) => {
     } else {
         req.employee = null
     }
-
+console.log(employee);
     next()
 }
 

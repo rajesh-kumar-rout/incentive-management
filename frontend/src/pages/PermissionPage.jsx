@@ -71,21 +71,21 @@ export default function PermissionPage() {
                                 <td>
                                     <div style={{ display: "flex", gap: 4 }}>
                                         {permission.isAdmin ? (
-                                            <button className="btn btn-sm btn-primary" onClick={() => changePermission(permission.id, "removeAdmin")}>
+                                            <button className="btn btn-sm btn-danger" onClick={() => changePermission(permission.id, "removeAdmin")}>
                                                 Remove Admin
                                             </button>
                                         ) : (
-                                            <button className="btn btn-sm btn-primary" onClick={() => changePermission(permission.id, "makeAdmin")}>
+                                            <button className="btn btn-sm btn-success" onClick={() => changePermission(permission.id, "makeAdmin")}>
                                                 Make Admin
                                             </button>
                                         )}
 
                                         {permission.isActive ? (
-                                            <button className="btn btn-sm btn-primary" onClick={() => changePermission(permission.id, "deactivate")}>
+                                            <button className="btn btn-sm btn-danger" onClick={() => changePermission(permission.id, "deactivate")}>
                                                 Deactivate
                                             </button>
                                         ) : (
-                                            <button className="btn btn-sm btn-primary" onClick={() => changePermission(permission.id, "activate")}>
+                                            <button className="btn btn-sm btn-success" onClick={() => changePermission(permission.id, "activate")}>
                                                 Activate
                                             </button>
                                         )}

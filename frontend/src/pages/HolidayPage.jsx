@@ -79,13 +79,15 @@ export default function HolidayPage() {
                                 <td>{holiday.location}</td>
                                 <td>{holiday.amenities.join(",")}</td>
                                 <td>
-                                    <Link to={`/holiday/add?id=${holiday.id}`} className="icon-btn" title="Edit">
-                                        <MdEdit size={18} />
-                                    </Link>
-                                    
-                                    <button className="icon-btn" title="Delete" onClick={() => deletePackage(holiday.id)}>
-                                        <MdDelete size={18} />
-                                    </button>
+                                    <div style={{ display: "flex", gap: 4 }}>
+                                        <Link to={`/holiday/add?id=${holiday.id}`} className="btn btn-icon" title="Edit">
+                                            <MdEdit size={18} />
+                                        </Link>
+
+                                        <button onClick={() => deletePackage(holiday.id)} className="btn btn-icon" title="Delete">
+                                            <MdDelete size={18} />
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}

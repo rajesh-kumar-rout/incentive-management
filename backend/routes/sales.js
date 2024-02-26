@@ -6,13 +6,13 @@ const router = Router()
 router.get("/", async (req, res) => {
     const employeeId = req.employee.id
 
-    const page = req.query.page ?? 1
+    const page = parseInt(req.query.page) ?? 1
 
     const limit = 10
 
     const offset = (page * 10) - 10
 
-    const { total } = await fetch(`SELECT COUNT(*) AS total FROM sales WHERE employeeId = ${employeeId}`)
+    const { totalSales } = await fetch(`SELECT COUNT(*) AS totalSales FROM sales WHERE employeeId = ${employeeId}`)
 
     const sales = await fetchAll(`SELECT sales.id, products.name AS product, customers.name, customers.mobile FROM sales INNER JOIN customers ON customers.id = sales.customerId INNER JOIN products ON products.id = sales.productId WHERE employeeId = ${employeeId} ORDER BY sales.id DESC LIMIT :limit OFFSET :offset`, {
         limit,
@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
     })
 
     res.json({
-        total,
+        totalPage: Math.ceil(totalSales / 10),
         data: sales
     })
 })
@@ -56,7 +56,8 @@ router.post("/", async (req, res) => {
     let holidayPackageId = null
 
     if (totalSales === 50000) {
-        holidayPackageId = await fetch(`SELECT id FROM holidayPackages ORDER BY RAND() LIMIT 1`)
+        const holidayPackage = await fetch(`SELECT id FROM holiday_packages ORDER BY RAND() LIMIT 1`)
+        holidayPackageId = holidayPackage.id
         percentage = 5
     } else if (totalSales === 30000) {
         percentage = 3.5

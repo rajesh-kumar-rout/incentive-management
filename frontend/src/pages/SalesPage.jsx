@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react"
-import { MdAdd } from "react-icons/md"
+import { MdAdd, MdArrowBack, MdArrowForward } from "react-icons/md"
 import { Link } from "react-router-dom"
 import useFetcher from "../hooks/useFetcher"
 import Loader from "../components/Loader"
 
 export default function SalesPage() {
     const [sales, setSales] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPage, setTotalPage] = useState(0)
     const [loading, setLoading] = useState(true)
     const fetcher = useFetcher()
 
     const fetchPackages = async () => {
         const { data } = await fetcher({
-            url: "/sales"
+            url: `/sales?page=${currentPage}`
         })
 
         setSales(data.data)
+        setTotalPage(data.totalPage)
         setLoading(false)
     }
 
     useEffect(() => {
         fetchPackages()
-    }, [])
+    }, [currentPage])
 
     if (loading) {
         return <Loader size="full" variant="primary" />
@@ -32,7 +35,7 @@ export default function SalesPage() {
                 <h3 className="page-title">Sales</h3>
 
                 <Link className="btn btn-sm btn-primary btn-action" to="/sales/add">
-                    <MdAdd size={18} /> 
+                    <MdAdd size={18} />
                     <span>Add New</span>
                 </Link>
             </div>
@@ -58,6 +61,23 @@ export default function SalesPage() {
                         ))}
                     </tbody>
                 </table>
+            </div>
+
+            <div className="pagination">
+                <p className="pagination-label">Showing page {currentPage} out of {totalPage}</p>
+
+                <div className="pagination-items">
+                    {currentPage !== 1 && (
+                        <button className="pagination-item" onClick={() => setCurrentPage(currentPage - 1)}>
+                            <MdArrowBack size={18} />
+                        </button>
+                    )}
+                    {currentPage < totalPage && (
+                        <button className="pagination-item" onClick={() => setCurrentPage(currentPage + 1)}>
+                            <MdArrowForward size={18} />
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     )

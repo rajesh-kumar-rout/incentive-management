@@ -2,13 +2,10 @@
 
 * {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    ;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
-.demo {}
 
 :root {
     --color-indigo-400: #818cf8;
@@ -17,19 +14,20 @@
     --color-indigo-700: #4338ca;
     --color-indigo-800: #3730a3;
 
-    --color-gray-300: #d1d5db;
     --color-white: #ffffff;
 
+    --color-red-400: #f87171;
     --color-red-600: #dc2626;
+    --color-red-800: #991b1b;
 
     --color-gray-100: #f3f4f6;
     --color-gray-300: #d1d5db;
     --color-gray-400: #9ca3af;
     --color-gray-600: #4b5563;
 
+    --color-green-400: #4ade80;
     --color-green-600: #16a34a;
-
-    --sidebar-width: 240px;
+    --color-green-800: #166534;
 }
 
 a,
@@ -41,7 +39,7 @@ input {
 }
 
 .sidebar {
-    width: var(--sidebar-width);
+    width: 240px;
     height: 100vh;
     background-color: var(--color-indigo-600);
     color: var(--color-white);
@@ -76,7 +74,7 @@ input {
 }
 
 .content {
-    margin-left: var(--sidebar-width);
+    margin-left: 240px;
     padding: 16px;
     height: 100vh;
     overflow-y: auto;
@@ -91,7 +89,6 @@ input {
         margin-left: 0px;
     }
 }
-
 
 .form {
     max-width: 500px;
@@ -155,7 +152,6 @@ input {
     margin-top: 4px;
 }
 
-
 .btn {
     border-radius: 6px;
     border: none;
@@ -181,10 +177,14 @@ input {
     width: 100%;
 }
 
-.btn-action {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+.btn-sm {
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.btn-icon {
+    color: var(--color-gray-600);
+    padding: 0px;
 }
 
 .btn-primary {
@@ -202,19 +202,35 @@ input {
     background-color: var(--color-indigo-400);
 }
 
-
-.icon-btn {
-    background: none;
-    border: none;
-    color: var(--color-gray-600);
-    margin-right: 4px;
-    cursor: pointer;
+.btn-danger {
+    background-color: var(--color-red-600);
+    color: var(--color-white);
+    transition: all;
+    transition-duration: 300ms;
 }
 
-.icon-btn:last-child {
-    margin-right: 0;
+.btn-danger:hover {
+    background-color: var(--color-red-800);
 }
 
+.btn-danger:disabled {
+    background-color: var(--color-red-400);
+}
+
+.btn-success {
+    background-color: var(--color-green-600);
+    color: var(--color-white);
+    transition: all;
+    transition-duration: 300ms;
+}
+
+.btn-success:hover {
+    background-color: var(--color-green-800);
+}
+
+.btn-success:disabled {
+    background-color: var(--color-green-400);
+}
 
 .table-responsive {
     border: 1px solid var(--color-gray-300);
@@ -244,7 +260,6 @@ input {
     padding: 8px 8px;
     font-size: 16px;
 }
-
 
 .page-action {
     display: flex;
@@ -319,31 +334,6 @@ input {
     cursor: pointer;
 }
 
-input[type=checkbox] {
-    --bs-form-check-bg: white;
-    flex-shrink: 0;
-    width: 1em;
-    height: 1em;
-    margin-top: .25em;
-    vertical-align: top;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-color: white;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    border: 1px solid red;
-    -webkit-print-color-adjust: exact;
-    color-adjust: exact;
-    print-color-adjust: exact
-}
-
-input[type=checkbox] {
-    border-radius: .25em
-}
-
 .statistics-list {
     display: flex;
     gap: 12px;
@@ -366,6 +356,37 @@ input[type=checkbox] {
 
 .statistics-number {
     padding: 16px 0px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pagination-items {
+    border: 1px solid var(--color-gray-300);
+    border-radius: 6px;
+    margin-top: 20px;
+    margin-left: auto;
+    display: inline-block;
+}
+
+.pagination-label {
+    color: var(--color-gray-600);
+}
+
+.pagination-item {
+    padding: 6px 10px;
+    display: inline-block;
+    border: none;
+    border-right: 1px solid var(--color-gray-300);
+    background:none;
+    cursor: pointer;
+}
+
+.pagination-item:last-child{
+    border-right: none;
 }
 
 .page-center {

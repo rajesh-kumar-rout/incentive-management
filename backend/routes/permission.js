@@ -21,16 +21,16 @@ router.patch("/:id", async (req, res) => {
     let message = null
 
     if (action === "deactivate") {
-        sql = sql.replace(":cols", "is_active = 0")
+        sql = sql.replace(":cols", "isActive = 0")
         message = "Account deactivated successfully"
     } else if (action === "activate") {
-        sql = sql.replace(":cols", "is_active = 1")
+        sql = sql.replace(":cols", "isActive = 1")
         message = "Account activated successfully"
     } else if (action === "makeAdmin") {
-        sql = sql.replace(":cols", "is_admin = 1")
+        sql = sql.replace(":cols", "isAdmin = 1")
         message = "Admin access provided successfully"
     } else if (action === "removeAdmin") {
-        sql = sql.replace(":cols", "is_admin = 0")
+        sql = sql.replace(":cols", "isAdmin = 0")
         message = "Admin accessed revoked successfully"
     }
 
