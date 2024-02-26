@@ -45,32 +45,60 @@ router.get("/", async (req, res) => {
     if(totalCustomers === 0) {
         await query(`
             INSERT INTO customers (name, mobile) VALUES
-            ('John Doe', '9988774499'),
-            ('Jane Smith', '9988774492'),
-            ('Michael Johnson', '9988774498'),
-            ('Emily Davis', '9988774492'),
+            ('John Doe', 9988774499),
+            ('Jane Smith', 9988774492),
+            ('Michael Johnson', 9988774498),
+            ('Emily Davis', 9988774494)
         `)
     }
 
-    if (req.query.action === "sales") {
-        for (let i = 1; i < 50000; i++) {
-            await query("INSERT INTO sales (customerId, employeeId, productId) VALUES (1,2,1)")
-        }
+    const { totalHolidays } = await fetch("SELECT COUNT(*) AS totalHolidays FROM holiday_packages")
 
-        for (let i = 1; i < 30000; i++) {
-            await query("INSERT INTO sales (customerId, employeeId, productId) VALUES (2,3,2)")
-        }
+    if(totalHolidays === 0) {
+        await query(`
+            INSERT INTO holiday_packages (name, duration, destination, location) VALUES
+            ('Goa Adventure Package', 3, 'Goa', 'Calangute'),
+            ('Himalayan Retreat Package', 5, 'Manali', 'Solang Valley'),
+            ('Kerala Backwaters Bliss Package', 4, 'Kochi', 'Alleppey')
+        `)
 
-        for (let i = 1; i < 20000; i++) {
-            await query("INSERT INTO sales (customerId, employeeId, productId) VALUES (3,4,3)")
-        }
+        await query(`DELETE FROM amenities`)
 
-        for (let i = 1; i < 10000; i++) {
-            await query("INSERT INTO sales (customerId, employeeId, productId) VALUES (4,5,4)")
-        }
+        await query(`
+            INSERT INTO amenities (name, holidayPackageId) VALUES
+            ('Water Sports', 1),
+            ('Cruise', 1),
+            ('Local Sightseeing', 1),
+            ('Mountain Trekking', 2),
+            ('Skiing', 2),
+            ('Hot Springs', 2),
+            ('Houseboat Stay', 3),
+            ('Ayurvedic Spa', 3),
+            ('Backwater Cruise', 3)
+        `)
     }
 
-    res.send("Seeding database successfully")
+    let message = "Seeding database successfully"
+
+    if (req.query.action === "sales") {
+        const {customerId} = await fetch("SELECT id AS customerId FROM customers ORDER BY RAND() LIMIT 1")
+
+        const employee = await fetch("SELECT * FROM employees WHERE isAdmin = 0 AND isActive = 1 ORDER BY RAND() LIMIT 1")
+
+        const {productId} = await fetch("SELECT id AS productId FROM products ORDER BY RAND() LIMIT 1")
+        
+        let sql = ""
+
+        for (let i = 1; i < 10000; i++) {
+            sql += `(${customerId}, ${employee.id}, ${productId}) ${i !== 9999 ? "," : ""}`
+        }
+
+        await query(`INSERT INTO sales (customerId, employeeId, productId) VALUES ${sql}`)
+
+        message = `Seeding database successfully - Email - ${employee.email}, id - ${employee.id}`
+    }
+
+    res.send(message)
 })
 
 export default router
