@@ -3,6 +3,7 @@ import { toast } from "react-toastify"
 import * as Yup from "yup"
 import { useAuth } from "../contexts/AuthContext"
 import useFetcher from "../hooks/useFetcher"
+import Loader from "../components/Loader"
 
 const schema = Yup.object({
     name: Yup.string().required("Name is required")
